@@ -1,8 +1,11 @@
 export default class Level1Scene extends Phaser.Scene {
+  
   constructor() {
     super("Level4Scene");
     this.buttonSize = { x: 40, y: 20 };
     this.solution = "\\b(Tyran\\s+){2}Tyran\\b"; //Solution for Level 4 
+    this.payloadText = 'The Tyrannosaurus rex was feeling dramatic. Tyran Tyran Tyran echoed through the valley as the rex practiced his villain laugh. Some called him a tyrant, others just called him Rex, but everyone agreed that when Tyran Tyran Tyran appeared in the jungle, snacks mysteriously disappeared.'
+
   }
 
   create() {
@@ -26,8 +29,9 @@ export default class Level1Scene extends Phaser.Scene {
     this.add.text(
       centerX,
       centerY - 300,
-      ` 
-     The Tyrannosaurus rex was feeling dramatic. Tyran Tyran Tyran echoed through the valley as the rex practiced his villain laugh. Some called him a tyrant, others just called him Rex, but everyone agreed that when Tyran Tyran Tyran appeared in the jungle, snacks mysteriously disappeared.
+      `
+      ${this.payloadText}\n\n
+       Using regex, highlight all instances of "Tyran Tyran Tyran" where "Tyran" is repeated exactly three times with at least one space in between each occurrence. Make sure to include word boundaries to avoid partial matches.
       `,
       {
         fontSize: "24px",
@@ -49,8 +53,13 @@ export default class Level1Scene extends Phaser.Scene {
 
     //Buttons for all regex components
     //Option buttons for each regex component -- don't forget to change method name and createOptionButton method
-    const options = ["A", "B", "C", "D"]; //Change options based on unlocked regex components
-    const totalSpan = 400; // Total width for all buttons
+    const options = [
+      "\\b(Tyran){2}\\sTyran\\b", 
+      "\\b(Tyran\\s+){2}", 
+      "\\b(Tyran\\s+){3}", 
+      "Tyran\\b"
+    ]; //Change options based on unlocked regex components
+    const totalSpan = 1400; // Total width for all buttons
     const spacing = options.length > 1 ? totalSpan / (options.length - 1) : 0;
     options.forEach((value, index) => {
       const offset = index - (options.length - 1) / 2;
@@ -64,7 +73,7 @@ export default class Level1Scene extends Phaser.Scene {
 
     //Continue button to next level -- don't forget to change scene name and createContinueButton method
     this.createContinueButton(centerX + bottomSpacing / 2, centerY + 500, "Continue", () => {
-      this.scene.start("Level2Scene");
+      this.scene.start("FinalLevelScene");
     });
   }
 
@@ -84,11 +93,11 @@ export default class Level1Scene extends Phaser.Scene {
       
       this.outputText.setText(this.outputText.text + value);
 
-      if (this.outputText.text === this.solution) {
-        // Correct solution entered
+      // Test if Regex selected by the user matches the solution
+      if(this.outputText.text === this.solution) {
         window.GameState.score += 1; // Increment score
         this.time.delayedCall(500, () => {
-          this.scene.start("Level2Scene"); // Move to next level after a short delay
+        this.scene.start("TitleScene"); // Move to next level after a short delay
         });
       }
     });
