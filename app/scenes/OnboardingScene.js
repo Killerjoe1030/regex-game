@@ -68,6 +68,8 @@
     this.createContinueButton(centerX + bottomSpacing / 2, centerY + 500, "Continue", () => {
       this.scene.start("Level1Scene");
     });
+
+    this.createOnboardingPrompt();
   }
 
   createOptionButton(x, y, value) {
@@ -127,4 +129,61 @@
     btn.on("pointerout", () => btn.setStyle({ backgroundColor: "#ffffff" }));
     btn.on("pointerdown", callback);
   }
+
+  createOnboardingPrompt() {
+    const centerX = this.scale.width / 2;
+    const centerY = this.scale.height / 2;
+
+    // Container to hold all onboarding UI
+    const container = this.add.container(0, 0);
+
+    // Dark overlay background
+    const overlay = this.add.rectangle(
+      centerX,
+      centerY,
+      this.scale.width,
+      this.scale.height,
+      0x000000,
+      0.6
+    );
+
+    // Modal background
+    const modalBg = this.add.rectangle(
+      centerX,
+      centerY,
+      this.scale.width - 200,
+      250,
+      0x111111,
+      0.95
+    ).setStrokeStyle(2, 0xffffff);
+
+    // Onboarding text
+    const onboardingText = this.add.text(
+      centerX,
+      centerY,
+      `Welcome to the tutorial!
+
+  In this game, you build patterns by clicking the buttons below.
+  Each button adds a new piece to your solution.
+
+  Your goal is to construct the correct answer shown in the level.
+  Click anywhere to begin!`,
+      {
+        fontSize: "22px",
+        color: "#ffffff",
+        align: "center",
+        wordWrap: { width: this.scale.width - 300 }
+      }
+    ).setOrigin(0.5);
+
+    // Add everything to container
+    container.add([overlay, modalBg, onboardingText]);
+
+    // Make container interactive and dismiss on click
+    overlay.setInteractive();
+    overlay.on("pointerdown", () => {
+      container.destroy();
+    });
+  }
+
 }
