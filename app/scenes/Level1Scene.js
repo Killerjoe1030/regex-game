@@ -2,7 +2,7 @@ export default class Level1Scene extends Phaser.Scene {
   constructor() {
     super("Level1Scene");
     this.buttonSize = { x: 40, y: 20 };
-    this.solution = "ABCD"; //Solution for Level 1
+    this.solution = "\bHerbivorous\b"; //Solution for Level 1
   }
 
   create() {
@@ -27,12 +27,15 @@ export default class Level1Scene extends Phaser.Scene {
       centerX,
       centerY - 300,
       `
-      Level 1 Problem SetLorem ipsum dolor sit amet, 
-      consectetur adipiscing elit, sed do eiusmod tempor 
-      incididunt ut labore et dolore magna aliqua. 
-      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+       The Stegosaurus is a genus of herbivorous four-legged armored dinosaurs from
+       the Late Jurassic period, characterized by the distinctive kite-shaped upright plates
+       along their backs and spikes on their tails. Herbivorous, large, and heavily built with 
+       rounded backs, short fore limbs, long hind limbs, and tails held high in the air. Due to
+       their distinctive combination of broad, upright plates and tail tipped with spikes, Stegosaurus
+       is one of the most recognizable kinds of dinosaurs. The function of this array of plates and spikes
+       has been the subject of much speculation among scientists. Today, it is generally agreed their 
+       spiked tails were most likely used as defense against predators, while their plates may have been 
+       used primarily for display, and secondarily for thermoregulatory functions.
       `,
       {
         fontSize: "24px",
