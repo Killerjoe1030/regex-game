@@ -3,12 +3,15 @@ export default class FinalLevelScene extends Phaser.Scene {
     super("FinalLevelScene");
     this.buttonSize = { x: 50, y: 25 };
     this.expectedMatches = [
+      "Researchers",
       "Denali National Park",
       "Coliseum",
-      "DUSTIN STEWART",
+      "Paleontologist Dustin Stewart",
       "2015"
     ];
   }
+  
+  //[A-Z][a-z]+\s[A-Z][a-z]+\s[A-Z][a-z]+|[A-Z][a-z]+|[A-Z][a-z]+\s[A-Z][a-z]+|\d\d\d\d
 
   create() {
     const width = this.scale.width;
@@ -22,12 +25,8 @@ export default class FinalLevelScene extends Phaser.Scene {
       wordWrap: { width: width * 0.9 }
     }).setOrigin(0.5);
 
-    this.sourceText = `Researchers recently discovered a rocky outcrop at Denali National Park in Alaska covered in dinosaur tracks.
-They've dubbed it the Coliseum. It's the largest dinosaur tracksite ever found in the state.
-Joining me now to talk more about this dino hotspot is my guest, DUSTIN STEWART, former graduate student at the University of Alaska Fairbanks.
-In the summer of 2015, a crew went out there and noted a large trackway from a single dinosaur.
-The area has thousands of dino prints from duck-billed dinosaurs, horned dinosaurs, raptors, and Tyrannosaurs.
-Finding meat-eating predators alongside herbivores made this site extremely exciting.`;
+    this.sourceText =
+      `Researchers discovered a rocky outcrop at Denali National Park covered in thousands of dinosaur tracks, which they nicknamed the Coliseum. Paleontologist Dustin Stewart helped document the find during an expedition in the summer of 2015.`;
 
     this.chars = [...this.sourceText];
     this.charObjects = [];
@@ -47,18 +46,20 @@ Finding meat-eating predators alongside herbivores made this site extremely exci
       color: "#ffff00"
     }).setOrigin(0.5);
 
-    // SAFE buttons (no literals)
     const components = [
-      "\\b",      // word boundary
-      "[A-Z]",    // uppercase letter
-      "[a-z]",    // lowercase letter
-      "\\d",      // digit
-      "+",        // one or more repetitions
-      "\\s",      // space
-      "|",        // OR
-      "?",
-      "(",        // open group
-      ")"         // close group
+      "\\w",
+      "[A-Z]",
+      "[a-z]",
+      "\\d",
+      "+",
+      "\\s",
+      "|",
+      "@",
+      "\\.",
+      "[0-9]",
+      "[^ ]",
+      "(",
+      ")"
     ];
 
     const buttonSpacing = 10;
@@ -69,7 +70,10 @@ Finding meat-eating predators alongside herbivores made this site extremely exci
     let y = height * 0.65;
 
     components.forEach((value) => {
-      const temp = this.add.text(0, 0, value, { fontSize: "24px", padding: { x: this.buttonSize.x, y: this.buttonSize.y } });
+      const temp = this.add.text(0, 0, value, {
+        fontSize: "24px",
+        padding: { x: this.buttonSize.x, y: this.buttonSize.y }
+      });
       const btnWidth = temp.width + buttonSpacing;
       temp.destroy();
 
@@ -105,9 +109,18 @@ Finding meat-eating predators alongside herbivores made this site extremely exci
     this.charObjects = [];
 
     this.chars.forEach(char => {
-      if (char === "\n") { x = width * 0.05; y += lineHeight; return; }
+      if (char === "\n") {
+        x = width * 0.05;
+        y += lineHeight;
+        return;
+      }
 
-      const txt = this.add.text(x, y, char, { fontFamily: "monospace", fontSize, color: "#ffffff" });
+      const txt = this.add.text(x, y, char, {
+        fontFamily: "monospace",
+        fontSize,
+        color: "#ffffff"
+      });
+
       if (x + txt.width > width * 0.05 + maxWidth) {
         x = width * 0.05;
         y += lineHeight;
@@ -118,49 +131,117 @@ Finding meat-eating predators alongside herbivores made this site extremely exci
       this.charObjects.push(txt);
     });
 
-    const totalWidth = this.charObjects.reduce((acc, c) => Math.max(acc, c.x + c.width), 0) - width * 0.05;
+    const totalWidth =
+      this.charObjects.reduce((acc, c) => Math.max(acc, c.x + c.width), 0)
+      - width * 0.05;
+
     const offsetX = (width - totalWidth) / 2 - width * 0.05;
     this.charObjects.forEach(c => c.x += offsetX);
   }
 
   updateHighlights() {
+    // 1. Reset all
     this.charObjects.forEach(c => c.setColor("#ffffff"));
     if (!this.regexString) return;
 
     let regex;
-    try { regex = new RegExp(this.regexString, "g"); } catch { return; }
+    try {
+      regex = new RegExp(this.regexString, "g");
+    } catch {
+      return;
+    }
 
+    const expectedSet = new Set(this.expectedMatches);
+
+    // 2. Collect matches
+    const matches = [];
     let match;
     while ((match = regex.exec(this.sourceText)) !== null) {
-      if (match[0].length === 0) { regex.lastIndex++; continue; } // prevent freeze
-      for (let i = match.index; i < match.index + match[0].length; i++) {
-        this.charObjects[i]?.setColor("#00ff00");
+      if (match[0].length === 0) {
+        regex.lastIndex++;
+        continue;
       }
+      matches.push({
+        start: match.index,
+        end: match.index + match[0].length,
+        text: match[0]
+      });
     }
+
+    // 3. Paint GREEN first (highest priority)
+    matches
+      .filter(m => expectedSet.has(m.text))
+      .forEach(m => {
+        for (let i = m.start; i < m.end; i++) {
+          this.charObjects[i]?.setColor("#00ff00");
+        }
+      });
+
+    // 4. Paint RED only if still white
+    matches
+      .filter(m => !expectedSet.has(m.text))
+      .forEach(m => {
+        for (let i = m.start; i < m.end; i++) {
+          if (this.charObjects[i]?.style.color === "#ffffff") {
+            this.charObjects[i]?.setColor("#ff5555");
+          }
+        }
+      });
   }
 
   getMatchRanges(regex, text) {
     const ranges = [];
     let match;
+
     while ((match = regex.exec(text)) !== null) {
-      if (match[0].length === 0) { regex.lastIndex++; continue; } // prevent freeze
-      ranges.push({ start: match.index, end: match.index + match[0].length });
+      if (match[0].length === 0) {
+        regex.lastIndex++;
+        continue;
+      }
+
+      ranges.push({
+        start: match.index,
+        end: Math.min(match.index + match[0].length, this.charObjects.length)
+      });
     }
+
     return ranges;
   }
 
   evaluateRegex(regexString) {
     let regex;
-    try { regex = new RegExp(regexString, "g"); } catch { return { score: 0, reason: "Invalid regex" }; }
+    try {
+      regex = new RegExp(regexString, "g");
+    } catch {
+      return { score: 0, reason: "Invalid regex" };
+    }
 
-    const matches = this.getMatchRanges(regex, this.sourceText).map(m => this.sourceText.slice(m.start, m.end));
-    const hits = this.expectedMatches.filter(payload => matches.includes(payload));
+    const ranges = this.getMatchRanges(regex, this.sourceText);
+    const matches = ranges.map(r =>
+      this.sourceText.slice(r.start, r.end)
+    );
 
-    const score = (hits.length / this.expectedMatches.length) * 100;
-    let reason;
-    if (score === 100) reason = "Perfect match";
-    else if (score > 0) reason = `Partial match: ${hits.length}/${this.expectedMatches.length}`;
-    else reason = "No expected matches";
+    const uniqueMatches = [...new Set(matches)];
+    const expectedHits = this.expectedMatches.filter(e =>
+      uniqueMatches.includes(e)
+    );
+
+    const falsePositives = uniqueMatches.filter(m =>
+      !this.expectedMatches.includes(m)
+    );
+
+    const accuracy = expectedHits.length / this.expectedMatches.length;
+    const precision =
+      uniqueMatches.length === 0
+        ? 0
+        : expectedHits.length / uniqueMatches.length;
+
+    const score = Math.round(accuracy * precision * 100);
+
+    let reason = `Accuracy: ${expectedHits.length}/${this.expectedMatches.length}`;
+    if (falsePositives.length) {
+      reason += ` | False positives: ${falsePositives.length}`;
+    }
 
     return { score, reason };
   }
@@ -193,6 +274,7 @@ Finding meat-eating predators alongside herbivores made this site extremely exci
     btn.on("pointerdown", () => {
       this.regexString = "";
       this.outputText.setText("");
+      this.outputText.setColor("#00ff00");
       this.updateHighlights();
       this.scoreText.setText("Score: 0");
     });
@@ -208,7 +290,10 @@ Finding meat-eating predators alongside herbivores made this site extremely exci
 
     btn.on("pointerdown", () => {
       const evaluation = this.evaluateRegex(this.regexString);
-      this.scoreText.setText(`Score: ${evaluation.score}`);
+      this.scoreText.setText(
+        `Score: ${evaluation.score}\n${evaluation.reason}`
+      );
+
       if (evaluation.score === 100) {
         window.GameState.score += 1;
         this.time.delayedCall(500, () => this.scene.start("TitleScene"));
