@@ -13,7 +13,7 @@ export default class Level1Scene extends Phaser.Scene {
     this.add.text(
       centerX,
       centerY - 500,
-      "Level 1 - Dinosaur Name",
+      "Level 1",
       {
         fontSize: "24px",
         color: "#ffffff",
@@ -57,7 +57,7 @@ export default class Level1Scene extends Phaser.Scene {
 
     //Buttons for all regex components
     //Option buttons for each regex component -- don't forget to change method name and createOptionButton method
-    const options = ["A", "B", "C", "D"]; //Change options based on unlocked regex components
+    const options = ["herbivorous", "/b", "\b", "[A-Z]", "Herbivorous"]; //Change options based on unlocked regex components
     const totalSpan = 400; // Total width for all buttons
     const spacing = options.length > 1 ? totalSpan / (options.length - 1) : 0;
     options.forEach((value, index) => {
