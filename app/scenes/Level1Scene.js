@@ -100,19 +100,38 @@ export default class FinalLevelScene extends Phaser.Scene {
     this.charObjects.forEach(c => c.destroy());
     this.charObjects = [];
 
-    this.chars.forEach(char => {
-      if (char === "\n") { x = width * 0.05; y += lineHeight; return; }
-
-      const txt = this.add.text(x, y, char, { fontFamily: "monospace", fontSize, color: "#ffffff" });
-      if (x + txt.width > width * 0.05 + maxWidth) {
+    this.chars.forEach((char, index) => {
+      if (char == '\n'){
         x = width * 0.05;
         y += lineHeight;
-        txt.setPosition(x, y);
+        return;
       }
 
-      x += txt.width;
+      const txt = this.add.text(x,y,char, {
+        fontFamily: "monospace",
+        fontSize,
+        color: "#ffffff"
+      });
+
+      txt.sourceIndex = index;
       this.charObjects.push(txt);
+
+      x += txt.width;
     });
+
+    // this.chars.forEach(char => {
+    //   if (char === "\n") { x = width * 0.05; y += lineHeight; return; }
+
+    //   const txt = this.add.text(x, y, char, { fontFamily: "monospace", fontSize, color: "#ffffff" });
+    //   if (x + txt.width > width * 0.05 + maxWidth) {
+    //     x = width * 0.05;
+    //     y += lineHeight;
+    //     txt.setPosition(x, y);
+    //   }
+
+    //   x += txt.width;
+    //   this.charObjects.push(txt);
+    // });
 
     const totalWidth = this.charObjects.reduce((acc, c) => Math.max(acc, c.x + c.width), 0) - width * 0.05;
     const offsetX = (width - totalWidth) / 2 - width * 0.05;
@@ -130,7 +149,10 @@ export default class FinalLevelScene extends Phaser.Scene {
     while ((match = regex.exec(this.sourceText)) !== null) {
       if (match[0].length === 0) { regex.lastIndex++; continue; } // prevent freeze
       for (let i = match.index; i < match.index + match[0].length; i++) {
-        this.charObjects[i]?.setColor("#00ff00");
+        // this.charObjects[i]?.setColor("#00ff00");
+        this.charObjects
+          .filter(c => c.sourceIndex === i)
+          .forEach(c => c.setColor("#00ff00"));
       }
     }
   }
