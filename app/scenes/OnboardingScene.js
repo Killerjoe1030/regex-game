@@ -134,6 +134,9 @@
     const centerX = this.scale.width / 2;
     const centerY = this.scale.height / 2;
 
+    const padding = 40;
+    const maxWidth = this.scale.width - 300;
+
     // Container to hold all onboarding UI
     const container = this.add.container(0, 0);
 
@@ -145,17 +148,7 @@
       this.scale.height,
       0x000000,
       0.6
-    );
-
-    // Modal background
-    const modalBg = this.add.rectangle(
-      centerX,
-      centerY,
-      this.scale.width - 200,
-      250,
-      0x111111,
-      0.95
-    ).setStrokeStyle(2, 0xffffff);
+    ).setInteractive();
 
     // Onboarding text
     const onboardingText = this.add.text(
@@ -164,9 +157,10 @@
       `Welcome to the tutorial!
 
   In this game, you build patterns by clicking the buttons below.
+
   Each button adds a new piece to your solution.
 
-  Your goal is to construct the correct answer shown in the level.
+  Your goal is to construct a valid Regex statement that highlights the correct answer shown in the level.\n
   Click anywhere to begin!`,
       {
         fontSize: "22px",
@@ -175,6 +169,19 @@
         wordWrap: { width: this.scale.width - 300 }
       }
     ).setOrigin(0.5);
+
+    const bgWidth = maxWidth + padding * 2; 
+    const bgHeight = onboardingText.height + padding * 2;
+
+    // Modal background
+    const modalBg = this.add.rectangle(
+      centerX,
+      centerY,
+      bgWidth,
+      bgHeight,
+      0x111111,
+      0.95
+    ).setStrokeStyle(2, 0xffffff);
 
     // Add everything to container
     container.add([overlay, modalBg, onboardingText]);
