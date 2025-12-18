@@ -95,6 +95,7 @@ export default class FinalLevelScene extends Phaser.Scene {
     const fontSize = Math.floor(height * 0.03);
     const lineHeight = fontSize * 1.5;
     const maxWidth = width * 0.9;
+    const q = 1;
 
     this.charObjects.forEach(c => c.destroy());
     this.charObjects = [];
