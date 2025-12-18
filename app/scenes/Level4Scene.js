@@ -2,7 +2,7 @@ export default class Level1Scene extends Phaser.Scene {
   constructor() {
     super("Level4Scene");
     this.buttonSize = { x: 40, y: 20 };
-    this.solution = "ABCD"; //Solution for Level 1
+    this.solution = "\\b(Tyran\\s+){2}Tyran\\b"; //Solution for Level 4 
   }
 
   create() {
@@ -26,13 +26,8 @@ export default class Level1Scene extends Phaser.Scene {
     this.add.text(
       centerX,
       centerY - 300,
-      `
-      Level 4 Problem SetLorem ipsum dolor sit amet, 
-      consectetur adipiscing elit, sed do eiusmod tempor 
-      incididunt ut labore et dolore magna aliqua. 
-      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      ` 
+     The Tyrannosaurus rex was feeling dramatic. Tyran Tyran Tyran echoed through the valley as the rex practiced his villain laugh. Some called him a tyrant, others just called him Rex, but everyone agreed that when Tyran Tyran Tyran appeared in the jungle, snacks mysteriously disappeared.
       `,
       {
         fontSize: "24px",
