@@ -19,7 +19,8 @@ export default class FinalLevelScene extends Phaser.Scene {
       wordWrap: { width: width * 0.9 }
     }).setOrigin(0.5);
 
-    this.sourceText = `The Stegosaurus is a genus of herbivorous four-legged armored dinosaurs from
+    this.sourceText = `
+       The Stegosaurus is a genus of herbivorous four-legged armored dinosaurs from
        the Late Jurassic period, characterized by the distinctive kite-shaped upright plates
        along their backs and spikes on their tails. Herbivorous, large, and heavily built with 
        rounded backs, short fore limbs, long hind limbs, and tails held high in the air. Due to
@@ -27,7 +28,10 @@ export default class FinalLevelScene extends Phaser.Scene {
        is one of the most recognizable kinds of dinosaurs. The function of this array of plates and spikes
        has been the subject of much speculation among scientists. Today, it is generally agreed their 
        spiked tails were most likely used as defense against predators, while their plates may have been 
-       used primarily for display, and secondarily for thermoregulatory functions.`;
+       used primarily for display, and secondarily for thermoregulatory functions.
+       
+       Use the Regex blocks to highlight the word: Herbivorous
+       `;
 
     this.chars = [...this.sourceText];
     this.charObjects = [];
