@@ -1,25 +1,33 @@
-export default class FinalLevelScene extends Phaser.Scene {
+export default class Level1Scene extends Phaser.Scene {
   constructor() {
     super("Level1Scene");
-    this.buttonSize = { x: 50, y: 25 };
-    this.expectedMatches = [
-      "Herbivorous"
-    ];
+    this.buttonSize = { x: 40, y: 20 };
+    this.solution = "\bHerbivorous\b"; //Solution for Level 1
   }
 
   create() {
-    const width = this.scale.width;
-    const height = this.scale.height;
-    this.regexString = "";
+    const centerX = this.scale.width / 2;
+    const centerY = this.scale.height / 2;
 
-    this.add.text(width / 2, height * 0.1, "Level 1", {
-      fontSize: `${Math.floor(height * 0.035)}px`,
-      color: "#ffffff",
-      align: "center",
-      wordWrap: { width: width * 0.9 }
-    }).setOrigin(0.5);
+    //Title of Level
+    this.add.text(
+      centerX,
+      centerY - 500,
+      "Level 1",
+      {
+        fontSize: "24px",
+        color: "#ffffff",
+        align: "center",
+        wordWrap: { width: this.scale.width - 100 }
+      }
+    ).setOrigin(0.5);
 
-    this.sourceText = `The Stegosaurus is a genus of herbivorous four-legged armored dinosaurs from
+    //Text area showing the payload of the level
+    this.add.text(
+      centerX,
+      centerY - 300,
+      `
+       The Stegosaurus is a genus of herbivorous four-legged armored dinosaurs from
        the Late Jurassic period, characterized by the distinctive kite-shaped upright plates
        along their backs and spikes on their tails. Herbivorous, large, and heavily built with 
        rounded backs, short fore limbs, long hind limbs, and tails held high in the air. Due to
@@ -27,75 +35,53 @@ export default class FinalLevelScene extends Phaser.Scene {
        is one of the most recognizable kinds of dinosaurs. The function of this array of plates and spikes
        has been the subject of much speculation among scientists. Today, it is generally agreed their 
        spiked tails were most likely used as defense against predators, while their plates may have been 
-       used primarily for display, and secondarily for thermoregulatory functions.`;
-
-    this.chars = [...this.sourceText];
-    this.charObjects = [];
-    this.renderChars(width, height);
-
-    this.outputText = this.add.text(width / 2, height * 0.5, "", {
-      fontSize: `${Math.floor(height * 0.04)}px`,
-      backgroundColor: "#000000",
-      color: "#00ff00",
-      padding: { x: 20, y: 10 },
-      align: "center",
-      wordWrap: { width: width * 0.9 }
-    }).setOrigin(0.5);
-
-    this.scoreText = this.add.text(width / 2, height * 0.58, "Score: 0", {
-      fontSize: `${Math.floor(height * 0.03)}px`,
-      color: "#ffff00"
-    }).setOrigin(0.5);
-
-    // SAFE buttons (no literals)
-    const components = [
-      "\\b",     
-      "herbivorous",    
-      "/b",   
-      "[A-Z]",     
-      "Herbivorous"
-    ];
-
-    const buttonSpacing = 10;
-    const buttonHeight = 50;
-    const maxRowWidth = width * 0.9;
-    let row = [];
-    let rowWidth = 0;
-    let y = height * 0.65;
-
-    components.forEach((value) => {
-      const temp = this.add.text(0, 0, value, { fontSize: "24px", padding: { x: this.buttonSize.x, y: this.buttonSize.y } });
-      const btnWidth = temp.width + buttonSpacing;
-      temp.destroy();
-
-      if (rowWidth + btnWidth > maxRowWidth) {
-        let startX = (width - rowWidth + buttonSpacing) / 2;
-        row.forEach(b => this.createOptionButton(startX + b.offset, y, b.value));
-        row = [];
-        rowWidth = 0;
-        y += buttonHeight;
+       used primarily for display, and secondarily for thermoregulatory functions.
+      `,
+      {
+        fontSize: "24px",
+        color: "#ffffff",
+        align: "center",
+        wordWrap: { width: this.scale.width - 100 }
       }
+    ).setOrigin(0.5);
 
-      row.push({ value, offset: rowWidth });
-      rowWidth += btnWidth;
+    //Text area showing the constructed regex string
+    this.outputText = this.add.text(
+      centerX, 
+      centerY, "", {
+        fontSize: "28px",
+        backgroundColor: "#000000",
+        color: "#00ff00",
+        padding: { x: 20, y: 10 }
+    }).setOrigin(0.5);
+
+    //Buttons for all regex components
+    //Option buttons for each regex component -- don't forget to change method name and createOptionButton method
+    const options = ["herbivorous", "/b", "\\b", "[A-Z]", "Herbivorous"]; //Change options based on unlocked regex components
+    const totalSpan = 400; // Total width for all buttons
+    const spacing = options.length > 1 ? totalSpan / (options.length - 1) : 0;
+    options.forEach((value, index) => {
+      const offset = index - (options.length - 1) / 2;
+      this.createOptionButton(centerX + offset * spacing, centerY + 300, value);
     });
 
-    if (row.length > 0) {
-      let startX = (width - rowWidth + buttonSpacing) / 2;
-      row.forEach(b => this.createOptionButton(startX + b.offset, y, b.value));
-    }
+    //Reset button to clear constructed regex string -- don't forget to change method name and createResetButton method
+    const bottomTotalSpan = 200; // Increased for padding between buttons
+    const bottomSpacing = bottomTotalSpan / 1; // For 2 buttons
+    this.createResetButton(centerX - bottomSpacing / 2, centerY + 500, "Reset");
 
-    this.createResetButton(width * 0.35, height * 0.85, "Reset");
-    this.createSolveButton(width * 0.65, height * 0.85, "Solve");
+    //Continue button to next level -- don't forget to change scene name and createContinueButton method
+    this.createContinueButton(centerX + bottomSpacing / 2, centerY + 500, "Continue", () => {
+      this.scene.start("Level2Scene");
+    });
   }
 
-  renderChars(width, height) {
+renderChars(width, height) {
     let x = width * 0.05;
     let y = height * 0.2;
     const fontSize = Math.floor(height * 0.03);
     const lineHeight = fontSize * 1.5;
     const maxWidth = width * 0.9;
-    const q = 1;
 
     this.charObjects.forEach(c => c.destroy());
     this.charObjects = [];
@@ -167,14 +153,28 @@ export default class FinalLevelScene extends Phaser.Scene {
       backgroundColor: "#ffffff",
       color: "#000000",
       padding: { x: this.buttonSize.x, y: this.buttonSize.y }
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    })
+    .setOrigin(0.5)
+    .setInteractive({ useHandCursor: true });
 
     btn.on("pointerover", () => btn.setStyle({ backgroundColor: "#dddddd" }));
     btn.on("pointerout", () => btn.setStyle({ backgroundColor: "#ffffff" }));
+    // btn.on("pointerdown", () => {
+      
+    //   this.outputText.setText(this.outputText.text + value);
     btn.on("pointerdown", () => {
       this.regexString += value;
       this.outputText.setText(this.regexString);
       this.updateHighlights();
+    });
+
+      if (this.outputText.text === this.solution) {
+        // Correct solution entered
+        window.GameState.score += 1; // Increment score
+        this.time.delayedCall(500, () => {
+          this.scene.start("Level2Scene"); // Move to next level after a short delay
+        });
+      }
     });
   }
 
@@ -184,32 +184,29 @@ export default class FinalLevelScene extends Phaser.Scene {
       backgroundColor: "#ffffff",
       color: "#000000",
       padding: { x: this.buttonSize.x, y: this.buttonSize.y }
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    })
+    .setOrigin(0.5)
+    .setInteractive({ useHandCursor: true });
 
+    btn.on("pointerover", () => btn.setStyle({ backgroundColor: "#dddddd" }));
+    btn.on("pointerout", () => btn.setStyle({ backgroundColor: "#ffffff" }));
     btn.on("pointerdown", () => {
-      this.regexString = "";
       this.outputText.setText("");
-      this.updateHighlights();
-      this.scoreText.setText("Score: 0");
     });
   }
 
-  createSolveButton(x, y, label) {
+  createContinueButton(x, y, label, callback) {
     const btn = this.add.text(x, y, label, {
       fontSize: "24px",
       backgroundColor: "#ffffff",
       color: "#000000",
       padding: { x: this.buttonSize.x, y: this.buttonSize.y }
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    })
+    .setOrigin(0.5)
+    .setInteractive({ useHandCursor: true });
 
-    btn.on("pointerdown", () => {
-      const evaluation = this.evaluateRegex(this.regexString);
-      this.scoreText.setText(`Score: ${evaluation.score}`);
-      if (evaluation.score === 100) {
-        window.GameState.score += 1;
-
-        this.time.delayedCall(500, () => this.scene.start("Level2Scene"));
-      }
-    });
+    btn.on("pointerover", () => btn.setStyle({ backgroundColor: "#dddddd" }));
+    btn.on("pointerout", () => btn.setStyle({ backgroundColor: "#ffffff" }));
+    btn.on("pointerdown", callback);
   }
 }
