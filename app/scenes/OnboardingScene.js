@@ -3,7 +3,7 @@ export default class FinalLevelScene extends Phaser.Scene {
     super("OnboardingScene");
     this.buttonSize = { x: 50, y: 25 };
     this.expectedMatches = [
-      "Dinosaurs"
+      "Dinosaur"
     ];
   }
 
@@ -24,6 +24,8 @@ export default class FinalLevelScene extends Phaser.Scene {
       Dinosaurs are a diverse group of reptiles that roamed the Earth over a hundred 
       million years ago. They first appeared during the triassic period. They are characterized 
       by an upright stance from a hole in their hip socket, allowing legs to be directly under the body.
+
+      Use the Regex blocks to highlight the word: Dinosaur
       `;
 
     this.chars = [...this.sourceText];
