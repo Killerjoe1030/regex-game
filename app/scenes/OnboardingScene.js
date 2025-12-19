@@ -1,4 +1,4 @@
-export default class FinalLevelScene extends Phaser.Scene {
+export default class OnboardingLevelScene extends Phaser.Scene {
   constructor() {
     super("OnboardingScene");
     this.buttonSize = { x: 50, y: 25 };

@@ -1,4 +1,4 @@
-export default class FinalLevelScene extends Phaser.Scene {
+export default class Level1Scene extends Phaser.Scene {
   constructor() {
     super("Level1Scene");
     this.buttonSize = { x: 50, y: 25 };
@@ -61,8 +61,8 @@ export default class FinalLevelScene extends Phaser.Scene {
     ];
 
     const buttonSpacing = 10;
-    const buttonHeight = 50;
-    const maxRowWidth = width * 0.9;
+    const buttonHeight = 50; // default was 50
+    const maxRowWidth = width * 0.9; // default was * 0.9
     let row = [];
     let rowWidth = 0;
     let y = height * 0.65;
@@ -95,7 +95,7 @@ export default class FinalLevelScene extends Phaser.Scene {
 
   renderChars(width, height) {
     let x = width * 0.05;
-    let y = height * 0.2;
+    let y = height * 0.1; // change back to 0.2 if needed
     const fontSize = Math.floor(height * 0.03);
     const lineHeight = fontSize * 1.5;
     const maxWidth = width * 0.9;
