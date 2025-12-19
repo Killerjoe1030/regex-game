@@ -27,6 +27,11 @@ export default class FinalLevelScene extends Phaser.Scene {
       color: "#ffffff"
     }).setOrigin(0.5);
 
+    this.instructionsText = this.add.text(0, 0, "Use Regex to match the following strings: Researchers, Denali National Park, Coliseum, Paleontologist Dustin Stewart, 2015", {
+      fontSize: "28px",
+      color: "#ffffff"
+    }).setOrigin(0.5);
+
     this.scoreText = this.add.text(20, 20, "Score: 0", {
       fontSize: "22px",
       color: "#ffff00"
@@ -81,6 +86,8 @@ export default class FinalLevelScene extends Phaser.Scene {
     this.titleText.setPosition(width / 2, 20);
     this.scoreText.setPosition(20, 20);
     this.pauseButton.setPosition(width - 20, 20);
+
+    this.instructionsText.setPosition(width / 2, 100);
 
     this.outputText.setPosition(width / 2, height * 0.52);
     this.outputText.setWordWrapWidth(width * 0.85);
