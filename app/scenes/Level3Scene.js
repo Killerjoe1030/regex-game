@@ -10,6 +10,12 @@ getChallenge(){
   create() {
     const centerX = this.scale.width / 2;
     const centerY = this.scale.height / 2;
+    
+    this.instructionsText = this.add.text(0, 0, "Use Regex to match all sentences with the word 'Spinosaurus' inside double quotes (\"),", {
+      fontSize: "28px",
+      color: "#ffffff"
+    }).setOrigin(0.5);
+    this.instructionsText.setPosition(this.scale.width / 2, 500);
 
     this.add.text(
       centerX,
